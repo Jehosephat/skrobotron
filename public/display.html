@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Display</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-4">
+  <div id="app"></div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    function Display() {
+      const params = new URLSearchParams(window.location.search);
+      const sessionId = params.get('sessionId');
+      const [state, setState] = React.useState({ home: 0, away: 0, timer: 0 });
+
+      React.useEffect(() => {
+        const socket = io({ query: { sessionId } });
+        socket.on('state', (s) => setState(s));
+        return () => socket.disconnect();
+      }, [sessionId]);
+
+      const formatTime = (sec) => `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+
+      return (
+        <div className="flex flex-col items-center space-y-6">
+          <div className="text-5xl">{formatTime(state.timer)}</div>
+          <div className="flex space-x-10 text-6xl font-bold">
+            <div>{state.home}</div>
+            <div>{state.away}</div>
+          </div>
+        </div>
+      );
+    }
+    const root = ReactDOM.createRoot(document.getElementById('app'));
+    root.render(<Display />);
+  </script>
+</body>
+</html>
