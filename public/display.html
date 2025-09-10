@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Scoreboard Display</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; }
+    .score { font-size: 5em; }
+    .clock { font-size: 3em; }
+  </style>
+</head>
+<body>
+  <div class="clock" id="clock">10:00</div>
+  <div class="score">
+    <span id="homeScore">0</span> - <span id="awayScore">0</span>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const session = params.get('session');
+    const socket = io({ query: { sessionId: session } });
+    const homeEl = document.getElementById('homeScore');
+    const awayEl = document.getElementById('awayScore');
+    const clockEl = document.getElementById('clock');
+    socket.on('state', state => {
+      homeEl.textContent = state.home;
+      awayEl.textContent = state.away;
+      clockEl.textContent = formatTime(state.clock);
+    });
+    function formatTime(sec){
+      const m = Math.floor(sec/60);
+      const s = sec%60;
+      return m.toString().padStart(2,'0')+':'+s.toString().padStart(2,'0');
+    }
+  </script>
+</body>
+</html>

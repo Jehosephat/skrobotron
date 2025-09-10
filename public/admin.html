@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Control</title>
+</head>
+<body>
+  <h1>Basketball Control</h1>
+  <div>
+    Home: <span id="homeScore">0</span>
+    <button onclick="update('home',1)">+1</button>
+    <button onclick="update('home',-1)">-1</button>
+  </div>
+  <div>
+    Away: <span id="awayScore">0</span>
+    <button onclick="update('away',1)">+1</button>
+    <button onclick="update('away',-1)">-1</button>
+  </div>
+  <div>
+    Clock: <span id="clock">10:00</span>
+    <button onclick="startClock()">Start</button>
+    <button onclick="stopClock()">Stop</button>
+    <button onclick="resetClock()">Reset</button>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const session = params.get('session');
+    const socket = io({ query: { sessionId: session } });
+    const homeEl = document.getElementById('homeScore');
+    const awayEl = document.getElementById('awayScore');
+    const clockEl = document.getElementById('clock');
+
+    socket.on('state', state => {
+      homeEl.textContent = state.home;
+      awayEl.textContent = state.away;
+      clockEl.textContent = formatTime(state.clock);
+    });
+
+    function update(team, delta) {
+      socket.emit('update', { team, delta });
+    }
+
+    function startClock(){ socket.emit('startClock'); }
+    function stopClock(){ socket.emit('stopClock'); }
+    function resetClock(){ socket.emit('resetClock'); }
+
+    function formatTime(sec){
+      const m = Math.floor(sec/60);
+      const s = sec%60;
+      return m.toString().padStart(2,'0')+':'+s.toString().padStart(2,'0');
+    }
+  </script>
+</body>
+</html>
