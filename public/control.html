@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Control</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="p-4">
+  <h1 class="text-xl mb-4">Control Panel</h1>
+  <div class="mb-2">Home: <span id="homeScore">0</span></div>
+  <div class="mb-2">Away: <span id="awayScore">0</span></div>
+  <div>
+    <button class="px-2 py-1 bg-green-500 text-white" onclick="update('home',1)">Home +1</button>
+    <button class="px-2 py-1 bg-red-500 text-white" onclick="update('home',-1)">Home -1</button>
+  </div>
+  <div class="mt-2">
+    <button class="px-2 py-1 bg-green-500 text-white" onclick="update('away',1)">Away +1</button>
+    <button class="px-2 py-1 bg-red-500 text-white" onclick="update('away',-1)">Away -1</button>
+  </div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const sessionId = params.get('sessionId');
+    const socket = io();
+    socket.emit('join', sessionId);
+    socket.on('scoreUpdate', ({ home, away }) => {
+      document.getElementById('homeScore').textContent = home;
+      document.getElementById('awayScore').textContent = away;
+    });
+    function update(team, delta) {
+      socket.emit('score', { sessionId, team, delta });
+    }
+  </script>
+</body>
+</html>

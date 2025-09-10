@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Display</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="p-4 text-center">
+  <h1 class="text-3xl mb-4">Scoreboard</h1>
+  <div class="text-6xl">
+    <span id="homeScore">0</span> - <span id="awayScore">0</span>
+  </div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const sessionId = params.get('sessionId');
+    const socket = io();
+    socket.emit('join', sessionId);
+    socket.on('scoreUpdate', ({ home, away }) => {
+      document.getElementById('homeScore').textContent = home;
+      document.getElementById('awayScore').textContent = away;
+    });
+  </script>
+</body>
+</html>

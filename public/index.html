@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>GymScoreboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-4">
+  <h1 class="text-2xl mb-4">GymScoreboard</h1>
+  <button id="create" class="px-4 py-2 bg-blue-500 text-white rounded">Create Session</button>
+  <div id="links" class="mt-4 hidden">
+    <p>Control link: <a id="controlLink" class="text-blue-600" target="_blank"></a></p>
+    <p>Display link: <a id="displayLink" class="text-blue-600" target="_blank"></a></p>
+  </div>
+  <script>
+    document.getElementById('create').onclick = async () => {
+      const res = await fetch('/api/session', { method: 'POST' });
+      const data = await res.json();
+      const sessionId = data.sessionId;
+      const controlUrl = `/control.html?sessionId=${sessionId}`;
+      const displayUrl = `/display.html?sessionId=${sessionId}`;
+      document.getElementById('controlLink').href = controlUrl;
+      document.getElementById('controlLink').textContent = location.origin + controlUrl;
+      document.getElementById('displayLink').href = displayUrl;
+      document.getElementById('displayLink').textContent = location.origin + displayUrl;
+      document.getElementById('links').classList.remove('hidden');
+    };
+  </script>
+</body>
+</html>
