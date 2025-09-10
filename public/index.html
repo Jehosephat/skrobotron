@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>GymScoreboard</title>
+</head>
+<body>
+  <h1>GymScoreboard</h1>
+  <button id="newSession">Create Basketball Session</button>
+  <div id="links"></div>
+  <script>
+    document.getElementById('newSession').onclick = async () => {
+      const res = await fetch('/api/session', { method: 'POST' });
+      const data = await res.json();
+      const adminUrl = `/admin.html?session=${data.sessionId}`;
+      const displayUrl = `/display.html?session=${data.sessionId}`;
+      document.getElementById('links').innerHTML =
+        `<p>Admin: <a href="${adminUrl}">${adminUrl}</a></p>` +
+        `<p>Display: <a href="${displayUrl}">${displayUrl}</a></p>`;
+    };
+  </script>
+</body>
+</html>
