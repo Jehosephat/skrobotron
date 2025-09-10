@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Control</title>
+</head>
+<body>
+  <h1>Control Panel</h1>
+  <div>
+    <h2>Home: <span id="home">0</span></h2>
+    <button onclick="change('home', 1)">+1</button>
+    <button onclick="change('home', -1)">-1</button>
+  </div>
+  <div>
+    <h2>Away: <span id="away">0</span></h2>
+    <button onclick="change('away', 1)">+1</button>
+    <button onclick="change('away', -1)">-1</button>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const sessionId = location.pathname.split('/').pop();
+    const socket = io({ query: { sessionId, role: 'control' } });
+    socket.on('scoreUpdate', state => {
+      document.getElementById('home').textContent = state.home;
+      document.getElementById('away').textContent = state.away;
+    });
+    function change(team, delta) {
+      socket.emit(delta > 0 ? 'increment' : 'decrement', team);
+    }
+  </script>
+</body>
+</html>

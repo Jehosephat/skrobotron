@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>GymScoreboard</title>
+</head>
+<body>
+  <h1>GymScoreboard</h1>
+  <button id="create">Create Basketball Scoreboard</button>
+  <div id="links"></div>
+  <script>
+    document.getElementById('create').addEventListener('click', async () => {
+      const res = await fetch('/session', {method: 'POST'});
+      const data = await res.json();
+      const links = document.getElementById('links');
+      links.innerHTML = `<p>Control: <a href="${data.controlUrl}">${location.origin}${data.controlUrl}</a></p>` +
+        `<p>Display: <a href="${data.displayUrl}">${location.origin}${data.displayUrl}</a></p>`;
+    });
+  </script>
+</body>
+</html>

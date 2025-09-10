@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Display</title>
+  <style>
+    body { text-align: center; font-size: 5em; margin-top: 50px; }
+    span { display: inline-block; width: 200px; }
+  </style>
+</head>
+<body>
+  <span id="home">0</span> - <span id="away">0</span>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const sessionId = location.pathname.split('/').pop();
+    const socket = io({ query: { sessionId, role: 'display' } });
+    socket.on('scoreUpdate', state => {
+      document.getElementById('home').textContent = state.home;
+      document.getElementById('away').textContent = state.away;
+    });
+  </script>
+</body>
+</html>
