@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
+interface SessionResponse {
+  controlUrl: string;
+  displayUrl: string;
+  qrCodeData: string;
+}
+
 export function Config() {
   const { state } = useLocation();
   const sport = (state as { sport?: string })?.sport || 'Unknown';
@@ -8,11 +14,17 @@ export function Config() {
   const [periods, setPeriods] = useState('');
   const [timer, setTimer] = useState('');
   const [counter, setCounter] = useState('');
+  const [session, setSession] = useState<SessionResponse | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Placeholder for configuration submission
-    console.log({ sport, periods, timer, counter });
+    const response = await fetch('http://localhost:3000/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sport, periods, timer, counter }),
+    });
+    const data = (await response.json()) as SessionResponse;
+    setSession(data);
   };
 
   return (
@@ -51,6 +63,17 @@ export function Config() {
         </div>
         <button type="submit">Save</button>
       </form>
+      {session && (
+        <div>
+          <p>
+            Control: <a href={session.controlUrl}>{session.controlUrl}</a>
+          </p>
+          <p>
+            Display: <a href={session.displayUrl}>{session.displayUrl}</a>
+          </p>
+          <img src={session.qrCodeData} alt="Display QR Code" />
+        </div>
+      )}
     </div>
   );
 }
