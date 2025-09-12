@@ -154,7 +154,12 @@ app.get('/session/:id/log', (req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-httpServer.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+
+if (require.main === module) {
+  httpServer.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+  });
+}
+
+export { app, httpServer, io };
 
