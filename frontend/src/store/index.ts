@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import scoreboardReducer from './scoreboardSlice';
+import eventsReducer from './eventsSlice';
 
 export const store = configureStore({
   reducer: {
     scoreboard: scoreboardReducer,
+    events: eventsReducer,
   },
 });
 

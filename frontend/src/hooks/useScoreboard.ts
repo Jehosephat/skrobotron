@@ -3,6 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, store } from '../store';
 import { setScore, setTimer, undo as undoAction, reset as resetAction } from '../store/scoreboardSlice';
+import { logScoreChange, logClockAction } from '../store/eventsSlice';
 
 interface ScoreboardHook {
   score: number;
@@ -34,11 +35,13 @@ export function useScoreboard(sessionId: string): ScoreboardHook {
 
   const updateScore = (value: number) => {
     dispatch(setScore({ value }));
+    dispatch(logScoreChange(value));
     socketRef.current?.emit('scoreUpdate', { sessionId, score: value });
   };
 
   const updateTimer = (value: number) => {
     dispatch(setTimer({ value }));
+    dispatch(logClockAction(value));
     socketRef.current?.emit('timerUpdate', { sessionId, timer: value });
   };
 
@@ -51,6 +54,8 @@ export function useScoreboard(sessionId: string): ScoreboardHook {
 
   const reset = () => {
     dispatch(resetAction());
+    dispatch(logScoreChange(0));
+    dispatch(logClockAction(0));
     socketRef.current?.emit('reset', { sessionId });
   };
 
