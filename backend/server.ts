@@ -28,6 +28,10 @@ io.on('connection', (socket) => {
     io.to(sessionId).emit('timerUpdate', timer);
   });
 
+  socket.on('reset', ({ sessionId }) => {
+    io.to(sessionId).emit('reset');
+  });
+
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
