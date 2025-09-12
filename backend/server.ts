@@ -7,10 +7,26 @@ import QRCode from 'qrcode';
 const app = express();
 app.use(express.json());
 const httpServer = createServer(app);
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*',
+  },
+});
 
 io.on('connection', (socket) => {
   console.log('a user connected');
+
+  socket.on('joinSession', (sessionId: string) => {
+    socket.join(sessionId);
+  });
+
+  socket.on('scoreUpdate', ({ sessionId, score }) => {
+    io.to(sessionId).emit('scoreUpdate', score);
+  });
+
+  socket.on('timerUpdate', ({ sessionId, timer }) => {
+    io.to(sessionId).emit('timerUpdate', timer);
+  });
 
   socket.on('disconnect', () => {
     console.log('user disconnected');
